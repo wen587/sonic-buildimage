@@ -14,6 +14,22 @@ _trap_push() {
 }
 _trap_push true
 
+read_platform2asic_conf() {
+    local conf_file=$1
+    while IFS='=' read -r var value || [ -n "$var" ]
+    do
+        # remove newline character
+        var=$(echo $var | tr -d '\r\n')
+        value=$(echo $value | tr -d '\r\n')
+        # remove comment string
+        var=${var%#*}
+        value=${value%#*}
+        # skip blank line
+        [ -z "$var" ] && continue
+        eval "platform2asic_$var=\"$value\""
+    done < "$conf_file"
+}
+
 set -e
 
 if [ -d "/etc/sonic" ]; then
@@ -87,6 +103,17 @@ timestamp="$(date -u +%Y%m%d)"
 demo_volume_label="SONiC-${demo_type}"
 demo_volume_revision_label="SONiC-${demo_type}-${image_version}"
 
+if [ -r ./platform2asic.conf ]; then
+    read_platform2asic_conf "./platform2asic.conf"
+fi
+
+eval running_platform=\"\$platform2asic_$onie_machine\"
+image_build_platform="%%ONIE_MACHINE%%"
+if [ -n "$running_platform" ] && [ -n "$image_build_platform" ]\
+        && [ "$running_platform" != "$image_build_platform" ]; then
+    echo "Error: Invalid sonic installer image: $image_build_platform"
+    exit 1
+fi
 
 . ./platform.conf
 

@@ -78,6 +78,7 @@ mkdir $tmp_installdir || clean_up 1
 cp -r $installer_dir/$arch/* $tmp_installdir || clean_up 1
 cp onie-image.conf $tmp_installdir
 cp onie-image-*.conf $tmp_installdir
+cp installer/platform2asic.conf $tmp_installdir
 
 # Escape special chars in the user provide kernel cmdline string for use in
 # sed. Special chars are: \ / &
@@ -93,6 +94,7 @@ sed -i -e "s/%%DEMO_TYPE%%/$demo_type/g" \
        -e "s/%%ONIE_IMAGE_PART_SIZE%%/$onie_image_part_size/" \
        -e "s/%%EXTRA_CMDLINE_LINUX%%/$EXTRA_CMDLINE_LINUX/" \
        -e "s@%%OUTPUT_RAW_IMAGE%%@$output_raw_image@" \
+       -e "s/%%ONIE_MACHINE%%/$machine/g" \
     $tmp_installdir/install.sh || clean_up 1
 echo -n "."
 cp -r $* $tmp_installdir || clean_up 1
