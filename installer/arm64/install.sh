@@ -83,6 +83,7 @@ demo_type="%%DEMO_TYPE%%"
 # with git revision hash as a version identifier
 image_version="%%IMAGE_VERSION%%"
 timestamp="$(date -u +%Y%m%d)"
+image_asic="%%IMAGE_ASIC%%"
 
 demo_volume_label="SONiC-${demo_type}"
 demo_volume_revision_label="SONiC-${demo_type}-${image_version}"
