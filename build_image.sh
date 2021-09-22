@@ -87,11 +87,24 @@ generate_onie_installer_image()
           $ONIE_INSTALLER_PAYLOAD
 }
 
+generate_onie_device_list()
+{
+    # Generate asic-specific ONIE device list
+    rm -rf ./installer/x86_64/devices/
+    mkdir -p ./installer/x86_64/devices/
+    for d in `find -L ./device  -maxdepth 2 -mindepth 2 -type d`; do
+            if [ -f $d/platform_asic ] && grep -Fxq "$CONFIGURED_PLATFORM" $d/platform_asic; then
+                touch ./installer/x86_64/devices/${d##*/};
+            fi;
+    done
+}
+
 if [ "$IMAGE_TYPE" = "onie" ]; then
     echo "Build ONIE installer"
     mkdir -p `dirname $OUTPUT_ONIE_IMAGE`
     sudo rm -f $OUTPUT_ONIE_IMAGE
 
+    generate_onie_device_list
     generate_onie_installer_image
 
 ## Build a raw partition dump image using the ONIE installer that can be

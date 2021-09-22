@@ -92,6 +92,39 @@ VAR_LOG_SIZE=4096
 
 [ -r platforms/$onie_platform ] && . platforms/$onie_platform
 
+# Verify image platform is inside devices list
+# Temporarily set TIMEOUT as 10 seconds
+if [ "$install_env" = "onie" ] && [ -d devices ]; then
+    if [ ! -f devices/$onie_platform ]; then
+        TIMEOUT=10
+        echo "The image you're trying to install is of a different platform as the running plaform"
+        while true; do
+            read -t $TIMEOUT -r -p "Do you still wish to install this image?[Y/n]" input
+            STATUS=$?
+            if test $STATUS -eq 0; then
+                case $input in
+                    [Yy])
+                        echo "Force installing..."
+                        break
+                        ;;
+                    [Nn])
+                        echo "Exited installation!"
+                        exit 1
+                        ;;
+                    *)
+                        echo "Error: Invalid input"
+                        ;;
+                esac
+            else
+                echo
+                echo "Timeout! Installation cancelled."
+                exit 1
+            fi
+        done
+
+    fi
+fi
+
 # Pick up console port and speed from install enviroment if not defined yet.
 # Console port and speed setting in cmdline is like "console=ttyS0,9600n",
 # so we can use pattern 'console=ttyS[0-9]+,[0-9]+' to match it.
