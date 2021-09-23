@@ -93,9 +93,9 @@ generate_onie_device_list()
     rm -rf ./installer/x86_64/devices/
     mkdir -p ./installer/x86_64/devices/
     for d in `find -L ./device  -maxdepth 2 -mindepth 2 -type d`; do
-            if [ -f $d/platform_asic ] && grep -Fxq "$CONFIGURED_PLATFORM" $d/platform_asic; then
-                touch ./installer/x86_64/devices/${d##*/};
-            fi;
+        if [ -f $d/platform_asic ] && grep -Fxq "$CONFIGURED_PLATFORM" $d/platform_asic; then
+            echo "${d##*/}" >> ./installer/x86_64/devices/platforms_asic;
+        fi;
     done
 }
 
@@ -182,6 +182,11 @@ elif [ "$IMAGE_TYPE" = "aboot" ]; then
     zip -g $OUTPUT_ABOOT_IMAGE version
     zip -g $ABOOT_BOOT_IMAGE version
     rm version
+
+    generate_onie_device_list
+    cp ./installer/x86_64/devices/platforms_asic .platforms_asic
+    zip -g $OUTPUT_ABOOT_IMAGE .platforms_asic
+    rm .platforms_asic
 
     zip -g $OUTPUT_ABOOT_IMAGE $ABOOT_BOOT_IMAGE
     rm $ABOOT_BOOT_IMAGE
