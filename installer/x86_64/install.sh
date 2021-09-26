@@ -93,13 +93,13 @@ VAR_LOG_SIZE=4096
 [ -r platforms/$onie_platform ] && . platforms/$onie_platform
 
 # Verify image platform is inside devices list
-# Temporarily set TIMEOUT as 10 seconds
+# Temporarily set INPUT_TIMEOUT as 10 seconds
 if [ "$install_env" = "onie" ]; then
     if ! grep -Fxq "$onie_platform" devices/platforms_asic; then
-        TIMEOUT=10
+        INPUT_TIMEOUT=10
         echo "The image you're trying to install is of a different platform as the running platform"
         while true; do
-            read -t $TIMEOUT -r -p "Do you still wish to install this image? [y/n]: " input
+            read -t $INPUT_TIMEOUT -r -p "Do you still wish to install this image? [y/n]: " input
             STATUS=$?
             if test $STATUS -eq 0; then
                 case $input in
