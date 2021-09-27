@@ -184,9 +184,11 @@ elif [ "$IMAGE_TYPE" = "aboot" ]; then
     rm version
 
     generate_onie_device_list
-    cp ./installer/x86_64/devices/platforms_asic .platforms_asic
-    zip -g $OUTPUT_ABOOT_IMAGE .platforms_asic
-    rm .platforms_asic
+    if [ -f ./installer/x86_64/devices/platforms_asic ]; then
+        cp ./installer/x86_64/devices/platforms_asic .platforms_asic
+        zip -g $OUTPUT_ABOOT_IMAGE .platforms_asic
+        rm .platforms_asic
+    fi
 
     zip -g $OUTPUT_ABOOT_IMAGE $ABOOT_BOOT_IMAGE
     rm $ABOOT_BOOT_IMAGE
