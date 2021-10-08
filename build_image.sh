@@ -89,22 +89,23 @@ generate_onie_installer_image()
 
 generate_device_list()
 {
-    # Generate asic-specific ONIE device list
-    rm -rf ./installer/x86_64/devices/
-    mkdir -p ./installer/x86_64/devices/
+    # Generate asic-specific device list
+    local platforms_asic=$1
     for d in `find -L ./device  -maxdepth 2 -mindepth 2 -type d`; do
         if [ -f $d/platform_asic ] && grep -Fxq "$CONFIGURED_PLATFORM" $d/platform_asic; then
-            echo "${d##*/}" >> ./installer/x86_64/devices/platforms_asic;
+            echo "${d##*/}" >> "$platforms_asic";
         fi;
     done
 }
-
 if [ "$IMAGE_TYPE" = "onie" ]; then
     echo "Build ONIE installer"
     mkdir -p `dirname $OUTPUT_ONIE_IMAGE`
     sudo rm -f $OUTPUT_ONIE_IMAGE
 
-    generate_device_list
+    rm -rf ./installer/x86_64/devices/
+    mkdir -p ./installer/x86_64/devices/
+    generate_device_list "./installer/x86_64/devices/platforms_asic"
+
     generate_onie_installer_image
 
 ## Build a raw partition dump image using the ONIE installer that can be
@@ -183,9 +184,9 @@ elif [ "$IMAGE_TYPE" = "aboot" ]; then
     zip -g $ABOOT_BOOT_IMAGE version
     rm version
 
-    generate_device_list
-    if [ -f ./installer/x86_64/devices/platforms_asic ]; then
-        cp ./installer/x86_64/devices/platforms_asic .platforms_asic
+    generate_device_list ".platforms_asic"
+    # Check file existence in case of general build
+    if [ -f .platforms_asic ]; then
         zip -g $OUTPUT_ABOOT_IMAGE .platforms_asic
         rm .platforms_asic
     fi
