@@ -92,8 +92,10 @@ generate_device_list()
     # Generate asic-specific device list
     local platforms_asic=$1
     for d in `find -L ./device  -maxdepth 2 -mindepth 2 -type d`; do
-        if [ -f $d/platform_asic ] && grep -Fxq "$CONFIGURED_PLATFORM" $d/platform_asic; then
-            echo "${d##*/}" >> "$platforms_asic";
+        if [ -f $d/platform_asic ]; then
+            if [ "$CONFIGURED_PLATFORM" = "generic" ] || grep -Fxq "$CONFIGURED_PLATFORM" $d/platform_asic; then
+                echo "${d##*/}" >> "$platforms_asic";
+            fi;
         fi;
     done
 }
@@ -185,11 +187,8 @@ elif [ "$IMAGE_TYPE" = "aboot" ]; then
     rm version
 
     generate_device_list ".platforms_asic"
-    # Check file existence in case of general build
-    if [ -f .platforms_asic ]; then
-        zip -g $OUTPUT_ABOOT_IMAGE .platforms_asic
-        rm .platforms_asic
-    fi
+    zip -g $OUTPUT_ABOOT_IMAGE .platforms_asic
+    rm .platforms_asic
 
     zip -g $OUTPUT_ABOOT_IMAGE $ABOOT_BOOT_IMAGE
     rm $ABOOT_BOOT_IMAGE
