@@ -65,7 +65,7 @@ VAR_LOG_SIZE=4096
 [ -r platforms/$onie_platform ] && . platforms/$onie_platform
 
 # Verify image platform is inside devices list
-if [ "$install_env" = "onie" ] && [ "$machine" != "generic" ]; then
+if [ "$install_env" = "onie" ]; then
     if ! grep -Fxq "$onie_platform" devices/platforms_asic; then
         echo "The image you're trying to install is of a different ASIC type as the running platform's ASIC"
         while true; do
