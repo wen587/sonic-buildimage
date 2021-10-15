@@ -90,12 +90,9 @@ generate_onie_installer_image()
 # Generate asic-specific device list
 generate_device_list()
 {
-
-    local device_dir=$1
-    local platforms_asic="$device_dir/$2"
+    local platforms_asic=$1
 
     # Create an empty function, and later append to it
-    mkdir -p $device_dir
     echo -n > $platforms_asic
 
     for d in `find -L ./device  -maxdepth 2 -mindepth 2 -type d`; do
@@ -112,7 +109,7 @@ if [ "$IMAGE_TYPE" = "onie" ]; then
     mkdir -p `dirname $OUTPUT_ONIE_IMAGE`
     sudo rm -f $OUTPUT_ONIE_IMAGE
 
-    generate_device_list "./installer/$TARGET_PLATFORM/devices" "platforms_asic"
+    generate_device_list "./installer/$TARGET_PLATFORM/platforms_asic"
 
     generate_onie_installer_image
 
@@ -125,7 +122,7 @@ elif [ "$IMAGE_TYPE" = "raw" ]; then
     mkdir -p `dirname $OUTPUT_RAW_IMAGE`
     sudo rm -f $OUTPUT_RAW_IMAGE
 
-    generate_device_list "./installer/$TARGET_PLATFORM/devices" "platforms_asic"
+    generate_device_list "./installer/$TARGET_PLATFORM/platforms_asic"
 
     generate_onie_installer_image
 
@@ -158,7 +155,7 @@ elif [ "$IMAGE_TYPE" = "raw" ]; then
 
 elif [ "$IMAGE_TYPE" = "kvm" ]; then
 
-    generate_device_list "./installer/$TARGET_PLATFORM/devices" "platforms_asic"
+    generate_device_list "./installer/$TARGET_PLATFORM/platforms_asic"
 
     generate_onie_installer_image
     # Generate single asic KVM image
@@ -196,7 +193,7 @@ elif [ "$IMAGE_TYPE" = "aboot" ]; then
     zip -g $ABOOT_BOOT_IMAGE version
     rm version
 
-    generate_device_list "." ".platforms_asic"
+    generate_device_list ".platforms_asic"
     zip -g $OUTPUT_ABOOT_IMAGE .platforms_asic
 
     zip -g $OUTPUT_ABOOT_IMAGE $ABOOT_BOOT_IMAGE
