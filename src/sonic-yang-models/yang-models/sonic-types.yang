@@ -60,6 +60,7 @@ module sonic-types {
 
     typedef packet_action{
         type enumeration {
+            enum ACCEPT;
             enum DROP;
             enum FORWARD;
             enum REDIRECT;
