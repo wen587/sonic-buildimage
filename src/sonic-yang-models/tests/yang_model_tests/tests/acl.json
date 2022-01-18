@@ -102,5 +102,8 @@
     "ACL_RULE_L2_INVALID_ETHER": {
         "desc": "Configure invalid MAC address format.",
         "eStrKey" : "Pattern"
+    },
+    "ACL_TABLE_CTRLPLANE_ACCEPT_ACTION": {
+        "desc": "Configure CTRLPLANE with proper action ACCEPT."
     }
 }
