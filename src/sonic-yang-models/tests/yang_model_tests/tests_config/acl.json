@@ -790,7 +790,7 @@
             }
         }
     },
-    "ACL_TABLE_CTRLPLANE_ACCEPT_ACTION": {
+    "ACL_PACKET_ACTION_VALIDATE_VALUE_ACCEPT": {
         "sonic-acl:sonic-acl": {
             "sonic-acl:ACL_RULE": {
                 "ACL_RULE_LIST": [
