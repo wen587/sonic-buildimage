@@ -282,6 +282,11 @@
                 "SRC_IPV6": "::/0",
                 "PRIORITY": "990000",
                 "DST_IPV6": "::/0"
+            },
+            "EVERFLOW_DSCP|RULE_1": {
+                "MIRROR_INGRES_ACTION": "erspan",
+                "DSCP": "10",
+                "PRIORITY": "9999"
             }
         },
         "DEVICE_METADATA": {
@@ -746,7 +751,17 @@
                     "Ethernet25",
                     "Ethernet24"
                 ]
+            },
+            "EVERFLOW_DSCP": {
+                "type": "MIRROR_DSCP",
+                "policy_desc": "EVERFLOW_DSCP",
+                "ports": [
+                    "Ethernet14",
+                    "Ethernet24"
+                ],
+                "stage": "ingress"
             }
+
         },
         "PBH_HASH_FIELD": {
             "inner_ip_proto": {
