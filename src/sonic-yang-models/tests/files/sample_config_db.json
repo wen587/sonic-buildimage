@@ -284,7 +284,7 @@
                 "DST_IPV6": "::/0"
             },
             "EVERFLOW_DSCP|RULE_1": {
-                "MIRROR_INGRES_ACTION": "erspan",
+                "MIRROR_INGRESS_ACTION": "erspan",
                 "DSCP": "10",
                 "PRIORITY": "9999"
             }
