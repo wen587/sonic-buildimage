@@ -129,6 +129,7 @@ module sonic-device_metadata {
 
                 leaf sub_role {
                     type string;
+                    description "sub_roble indicates if ASIC is FrondEnd or BackEnd.";
                 }
 
                 leaf downstream_subrole {
