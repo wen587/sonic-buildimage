@@ -249,7 +249,7 @@ def _get_jinja2_env(paths):
 
 def _must_field_by_yang(data, table, must_fields):
     """
-    Check if table contians must field based on yang defination
+    Check if table contains must field based on yang definition
     """
     if table not in data:
         return
