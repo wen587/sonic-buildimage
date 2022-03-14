@@ -247,6 +247,19 @@ def _get_jinja2_env(paths):
 
     return env
 
+def _must_field_by_yang(data, table, must_fields):
+    """
+    Check if table contians must field based on yang defination
+    """
+    if table not in data:
+        return
+
+    for must_field in must_fields:
+        for _, fields in data[table].items():
+            if must_field not in fields:
+                print(must_field, 'is a must field in', table, file=sys.stderr)
+                sys.exit(1)
+
 def main():
     parser=argparse.ArgumentParser(description="Render configuration file from minigraph data and jinja2 template.")
     group = parser.add_mutually_exclusive_group()
