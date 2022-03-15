@@ -349,7 +349,7 @@ def main():
         else:
             deep_update(data, parse_xml(minigraph, port_config_file=args.port_config, asic_name=asic_name, hwsku_config_file=args.hwsku_config))
         # check if minigraph parser has speed and lanes in PORT table
-        _must_field_by_yang(data, 'PORT', ['speed', 'lanes']):
+        _must_field_by_yang(data, 'PORT', ['speed', 'lanes'])
 
     if args.device_description is not None:
         deep_update(data, parse_device_desc_xml(args.device_description))
