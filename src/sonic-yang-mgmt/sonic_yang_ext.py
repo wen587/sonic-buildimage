@@ -593,7 +593,11 @@ class SonicYangExtMixin:
         ccontainer = model
         #print(ccontainer['@name'])
         yang[ccontainer['@name']] = dict()
-        if not configC.get(ccontainer['@name']):
+        if configC.get(ccontainer['@name']) is None:
+            return
+        if len(ccontainer['@name']) == 0:
+            # Empty container, clean config and return
+            del configC[ccontainer['@name']]
             return
         self.sysLog(msg="xlateProcessListOfContainer: {}".format(ccontainer['@name']))
         self._xlateContainer(ccontainer, yang[ccontainer['@name']], \
