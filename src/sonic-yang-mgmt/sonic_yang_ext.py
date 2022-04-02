@@ -591,22 +591,22 @@ class SonicYangExtMixin:
     """
     def _xlateContainerInContainer(self, model, yang, configC, table):
         ccontainer = model
-        #print(ccontainer['@name'])
-        yang[ccontainer['@name']] = dict()
-        if configC.get(ccontainer['@name']) is None:
+        ccName = ccontainer['@name']
+        yang[ccName] = dict()
+        if ccName not in configC:
             return
-        if len(ccontainer['@name']) == 0:
+        if len(ccName) == 0:
             # Empty container, clean config and return
-            del configC[ccontainer['@name']]
+            del configC[ccName]
             return
-        self.sysLog(msg="xlateProcessListOfContainer: {}".format(ccontainer['@name']))
-        self._xlateContainer(ccontainer, yang[ccontainer['@name']], \
-        configC[ccontainer['@name']], table)
+        self.sysLog(msg="xlateProcessListOfContainer: {}".format(ccName))
+        self._xlateContainer(ccontainer, yang[ccName], \
+        configC[ccName], table)
         # clean empty container
-        if len(yang[ccontainer['@name']]) == 0:
-            del yang[ccontainer['@name']]
+        if len(yang[ccName]) == 0:
+            del yang[ccName]
         # remove copy after processing
-        del configC[ccontainer['@name']]
+        del configC[ccName]
 
         return
 
