@@ -52,16 +52,6 @@
         }
     },
 
-    "TACPLUS_VERIFY_VALID_EMPTY_GLOBAL": {
-        "sonic-system-tacacs:sonic-system-tacacs": {
-            "sonic-system-tacacs:TACPLUS": {
-                "global": {
-                }
-            }
-        }
-
-    },
-
     "TACPLUS_SERVER_TEST": {
         "sonic-system-tacacs:sonic-system-tacacs": {
             "sonic-system-tacacs:TACPLUS_SERVER": {

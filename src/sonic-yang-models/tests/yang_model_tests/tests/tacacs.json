@@ -10,9 +10,6 @@
         "desc": "Tacplus global configuration with a non existent port in TACPLUS table.",
         "eStrKey": "InvalidValue"
     },
-    "TACPLUS_VERIFY_VALID_EMPTY_GLOBAL": {
-        "desc": "Tacplus valid empty global configuration in TACPLUS table."
-    },
     "TACPLUS_SERVER_TEST" : {
         "desc": "Tacplus server configuration in TACPLUS_SERVER table."
     },

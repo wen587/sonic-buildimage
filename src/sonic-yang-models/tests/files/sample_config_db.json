@@ -1694,5 +1694,11 @@
         "UNKNOWN_TABLE": {
             "Error": "This Table is for testing, This Table does not have YANG models."
         }
+    },
+    "SAMPLE_CONFIG_DB_SPECIAL_CASE": {
+        "TACPLUS": {
+            "global": {
+            }
+        }
     }
 }
