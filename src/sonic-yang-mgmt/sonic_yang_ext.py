@@ -594,8 +594,9 @@ class SonicYangExtMixin:
         ccName = ccontainer['@name']
         yang[ccName] = dict()
         if ccName not in configC:
+            # Inner container doesn't exist in config
             return
-        if len(ccName) == 0:
+        if len(configC[ccName]) == 0:
             # Empty container, clean config and return
             del configC[ccName]
             return
