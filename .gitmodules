@@ -62,6 +62,9 @@
 [submodule "src/redis-dump-load"]
 	path = src/redis-dump-load
 	url = https://github.com/p/redis-dump-load.git
+[submodule "src/scapy"]
+	path = src/scapy
+	url = https://github.com/secdev/scapy.git
 [submodule "platform/mellanox/mlnx-sai/SAI-Implementation"]
 	path = platform/mellanox/mlnx-sai/SAI-Implementation
 	url = https://github.com/Mellanox/SAI-Implementation
@@ -100,6 +103,6 @@
 [submodule "src/sonic-p4rt/sonic-pins"]
 	path = src/sonic-p4rt/sonic-pins
 	url = https://github.com/Azure/sonic-pins.git
-[submodule "src/thrift_0_14_1/thrift"]
-	path = src/thrift_0_14_1/thrift
-	url = https://github.com/apache/thrift.git
+[submodule "src/ptf-py3"]
+	path = src/ptf-py3
+	url = https://github.com/p4lang/ptf.git

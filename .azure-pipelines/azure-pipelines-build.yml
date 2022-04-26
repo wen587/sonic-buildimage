@@ -50,6 +50,7 @@ jobs:
             swi_image: yes
 
         - name: broadcom
+          timeoutInMinutes: 1440
           variables:
             dbg_image: yes
             swi_image: yes
@@ -131,3 +132,4 @@ jobs:
             make $BUILD_OPTIONS target/sonic-$(GROUP_NAME).bin
           fi
         displayName: "Build sonic image"
+      - template: check-dirty-version.yml
