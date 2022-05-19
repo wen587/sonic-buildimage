@@ -1804,10 +1804,10 @@
 
         "SNMP": {
             "CONTACT": {
-                "Contact": "sonic-support@xxx.com"
+                "Contact": "testuser@contoso.com"
             },
             "LOCATION": {
-                "Location": "Sonic Location"
+                "Location": "SNMP Server Location"
             }
         },
         "SNMP_COMMUNITY": {
