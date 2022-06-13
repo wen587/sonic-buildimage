@@ -775,6 +775,7 @@ instance is supported in SONiC.
         "bgp_asn": "65100",
         "deployment_id": "1",
         "type": "ToRRouter",
+        "bgp_adv_lo_prefix_as_128" : "true",
         "buffer_model": "traditional"
     }
   }
@@ -935,6 +936,9 @@ Loopback interface configuration lies in **LOOPBACK_INTERFACE** table
 and has similar schema with data plane interfaces. The loopback device
 name and loopback IP prefix act as multi-level key for loopback
 interface objects.
+By default SONiC advertises Loopback interface IPv6 /128 subnet address
+as prefix with /64 subnet. To overcome this set "bgp_adv_lo_prefix_as_128"
+to true in DEVICE_METADATA
 
 ```
 {
@@ -1172,7 +1176,9 @@ optional attributes.
             "mtu": "9100",
             "alias": "fortyGigE1/1/1",
             "speed": "40000",
-            "link_training": "off"
+            "link_training": "off",
+            "laser_freq": "191300",
+            "tx_power": "-27.3"
         },
         "Ethernet1": {
             "index": "1",
@@ -1182,7 +1188,9 @@ optional attributes.
             "alias": "fortyGigE1/1/2",
             "admin_status": "up",
             "speed": "40000",
-            "link_training": "on"
+            "link_training": "on",
+            "laser_freq": "191300",
+            "tx_power": "-27.3"
         },
         "Ethernet63": {
             "index": "63",
@@ -1190,7 +1198,9 @@ optional attributes.
             "description": "fortyGigE1/4/16",
             "mtu": "9100",
             "alias": "fortyGigE1/4/16",
-            "speed": "40000"
+            "speed": "40000",
+            "laser_freq": "191300",
+            "tx_power": "-27.3"
         }
     }
 }
