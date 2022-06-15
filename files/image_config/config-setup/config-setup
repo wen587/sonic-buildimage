@@ -31,7 +31,6 @@ CONFIG_DB_JSON=/etc/sonic/config_db.json
 CONFIG_DB_PATH=/etc/sonic/
 CONFIG_DB_PREFIX=config_db
 CONFIG_DB_SUFFIX=.json
-MINGRAPH_FILE=/etc/sonic/minigraph.xml
 TMP_ZTP_CONFIG_DB_JSON=/tmp/ztp_config_db.json
 FACTORY_DEFAULT_HOOKS=/etc/config-setup/factory-default-hooks.d
 CONFIG_PRE_MIGRATION_HOOKS=/etc/config-setup/config-migration-pre-hooks.d
@@ -103,14 +102,6 @@ run_hookdir() {
     fi
 
     return $exit_status
-}
-
-# Reload minigraph.xml file on disk
-reload_minigraph()
-{
-    echo "Reloading minigraph..."
-    config load_minigraph -y -n 
-    config save -y
 }
 
 # Apply tacacs config
@@ -305,7 +296,7 @@ check_all_config_db_present()
 do_config_migration()
 {
     # Identify list of files to migrate
-    copy_list="minigraph.xml snmp.yml acl.json port_config.json frr telemetry"
+    copy_list="snmp.yml acl.json port_config.json frr telemetry"
 
     # Migrate all configuration files from old to new
     copy_config_files_and_directories $copy_list
@@ -329,13 +320,8 @@ do_config_migration()
         reload_configdb
         # Disable updategraph
         disable_updategraph
-    elif [ -r ${MINGRAPH_FILE} ]; then
-        echo "Use minigraph.xml from old system..."
-        reload_minigraph
-        # Disable updategraph
-        disable_updategraph
     else
-        echo "Didn't found neither config_db.json nor minigraph.xml ..."
+        echo "Didn't found neither config_db.json..."
     fi
 
     rm -f /tmp/pending_config_migration
@@ -367,7 +353,7 @@ boot_config()
     fi
 
     # For multi-npu platfrom we don't support config initialization. Assumption
-    # is there should be existing minigraph or config_db from previous image
+    # is there should be existing config_db from previous image
     # file system to trigger. pending_config_initialization will remain set
     # for multi-npu platforms if we reach this case.
     if [[ ($NUM_ASIC -gt 1) ]]; then
