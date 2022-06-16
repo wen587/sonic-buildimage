@@ -10,6 +10,11 @@ fi
 
 . /etc/sonic/updategraph.conf
 
+if [ "$enabled" = "reload_only" ]; then
+    echo "reload_only will not be supported in file updategraph.conf"
+    exit 1
+fi
+
 if [ "$enabled" != "true" ]; then
     echo "Disabled in updategraph.conf. Skipping graph update."
     exit 0

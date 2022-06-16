@@ -321,7 +321,7 @@ do_config_migration()
         # Disable updategraph
         disable_updategraph
     else
-        echo "Didn't found neither config_db.json..."
+        echo "Didn't found config_db.json..."
     fi
 
     rm -f /tmp/pending_config_migration
