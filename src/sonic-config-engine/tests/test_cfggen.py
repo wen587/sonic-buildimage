@@ -14,6 +14,7 @@ BACKEND_LEAF_ROUTER = 'BackEndLeafRouter'
 class TestCfgGen(TestCase):
 
     def setUp(self):
+        self.yang = utils.YangWrapper()
         self.test_dir = os.path.dirname(os.path.realpath(__file__))
         self.script_file = utils.PYTHON_INTERPRETTER + ' ' + os.path.join(self.test_dir, '..', 'sonic-cfggen')
         self.sample_graph = os.path.join(self.test_dir, 'sample_graph.xml')
@@ -50,6 +51,8 @@ class TestCfgGen(TestCase):
 
     def run_script(self, argument, check_stderr=False, verbose=False):
         print('\n    Running sonic-cfggen ' + argument)
+        self.assertTrue(self.yang.validate(argument))
+
         if check_stderr:
             output = subprocess.check_output(self.script_file + ' ' + argument, stderr=subprocess.STDOUT, shell=True)
         else:
@@ -325,7 +328,7 @@ class TestCfgGen(TestCase):
         output = self.run_script(argument)
         self.assertEqual(
             utils.to_dict(output.strip()),
-            utils.to_dict("{'PortChannel01': {'admin_status': 'up', 'min_links': '1', 'members': ['Ethernet4'], 'mtu': '9100', 'tpid': '0x8100'}}")
+            utils.to_dict("{'PortChannel1': {'admin_status': 'up', 'min_links': '1', 'members': ['Ethernet4'], 'mtu': '9100', 'tpid': '0x8100'}}")
         )
 
     def test_minigraph_portchannel_with_more_member(self):
@@ -349,7 +352,7 @@ class TestCfgGen(TestCase):
         output = self.run_script(argument)
         self.assertEqual(
             utils.liststr_to_dict(output.strip()),
-            utils.liststr_to_dict("['PortChannel01', ('PortChannel01', '10.0.0.56/31'), ('PortChannel01', 'FC00::71/126')]")
+            utils.liststr_to_dict("['PortChannel1', ('PortChannel1', '10.0.0.56/31'), ('PortChannel1', 'FC00::71/126')]")
         )
 
     def test_minigraph_neighbors(self):
@@ -803,11 +806,11 @@ class TestCfgGen(TestCase):
                 self.assertEqual(
                     utils.to_dict(output.strip()),
                     utils.to_dict(
-                        "{('PortChannel01.10', '10.0.0.56/31'): {}, "
+                        "{('PortChannel1.10', '10.0.0.56/31'): {}, "
                         "'Ethernet0.10': {'admin_status': 'up'}, "
                         "('Ethernet0.10', '10.0.0.58/31'): {}, "
-                        "('PortChannel01.10', 'FC00::71/126'): {}, "
-                        "'PortChannel01.10': {'admin_status': 'up'}, "
+                        "('PortChannel1.10', 'FC00::71/126'): {}, "
+                        "'PortChannel1.10': {'admin_status': 'up'}, "
                         "('Ethernet0.10', 'FC00::75/126'): {}}"
                     )
                 )
@@ -893,18 +896,36 @@ class TestCfgGen(TestCase):
         output = self.run_script(argument)
         output_dict = utils.to_dict(output.strip())
         self.assertDictEqual(
-            output_dict['Ethernet-IB0'],
-            {'lanes': '133', 
-            'alias': 'Recycle0', 
-            'description': 'Recycle0', 
-            'mtu': '9100', 
-            'tpid': '0x8100', 
-            'pfc_asym': 'off', 
-            'admin_status': 'up',
-            'fec': 'rs',
-            'speed': '100000'
-            }
-        )
+            output_dict['Ethernet-IB0'], {
+                "lanes": "222",
+                "alias": "Recirc0/1",
+                "index": "52",
+                "role": "Inb",
+                "speed": "400000",
+                "description": "Recirc0/1",
+                "mtu": "9100",
+                "tpid": "0x8100",
+                "pfc_asym": "off",
+                "admin_status": "up"
+            })
+
+    def test_minigraph_voq_recirc_ports(self):
+        argument = "-m {} -p {} --var-json PORT".format(self.sample_graph_voq, self.voq_port_config)
+        output = self.run_script(argument)
+        output_dict = utils.to_dict(output.strip())
+        self.assertDictEqual(
+            output_dict['Ethernet-Rec0'], {
+                "lanes": "221",
+                "alias": "Recirc0/0",
+                "index": "51",
+                "role": "Rec",
+                "speed": "400000",
+                "description": "Recirc0/0",
+                "mtu": "9100",
+                "tpid": "0x8100",
+                "pfc_asym": "off",
+                "admin_status": "up"
+            })
 
     def test_minigraph_dhcp(self):
         argument = '-m "' + self.sample_graph_simple_case + '" -p "' + self.port_config + '" -v DHCP_RELAY'

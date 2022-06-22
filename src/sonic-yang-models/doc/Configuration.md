@@ -44,12 +44,14 @@ Table of Contents
          * [Queue](#queue)  
          * [Tacplus Server](#tacplus-server)    
          * [TC to Priority group map](#tc-to-priority-group-map)  
-         * [TC to Queue map](#tc-to-queue-map)  
+         * [TC to Queue map](#tc-to-queue-map)    
+         * [Telemetry](#telemetry)  
          * [Versions](#versions)  
          * [VLAN](#vlan)   
          * [VLAN_MEMBER](#vlan_member)  
          * [Virtual router](#virtual-router)  
          * [WRED_PROFILE](#wred_profile)  
+         * [PASSWORD_HARDENING](#password_hardening)
    * [For Developers](#for-developers)  
       * [Generating Application Config by Jinja2 Template](#generating-application-config-by-jinja2-template)
       * [Incremental Configuration by Subscribing to ConfigDB](#incremental-configuration-by-subscribing-to-configdb)
@@ -105,17 +107,18 @@ redis and json, correspondingly:
 
 
 ***Redis format***
-```
-127.0.0.1:6379[4]> keys BGP_NEIGHBOR:*
 
-1) "BGP_NEIGHBOR:10.0.0.31"
-2) "BGP_NEIGHBOR:10.0.0.39"
-3) "BGP_NEIGHBOR:10.0.0.11"
-4) "BGP_NEIGHBOR:10.0.0.7"
+```
+127.0.0.1:6379[4]> keys BGP_NEIGHBOR|*
+
+1) "BGP_NEIGHBOR|10.0.0.31"
+2) "BGP_NEIGHBOR|10.0.0.39"
+3) "BGP_NEIGHBOR|10.0.0.11"
+4) "BGP_NEIGHBOR|10.0.0.7"
 
 ...
 
-127.0.0.1:6379[4]> hgetall BGP_NEIGHBOR:10.0.0.3
+127.0.0.1:6379[4]> hgetall BGP_NEIGHBOR|10.0.0.3
 
 1) "admin_status"
 2) "up"
@@ -128,26 +131,27 @@ redis and json, correspondingly:
 ```
 
 ***Json format***
+
 ```
 "BGP_NEIGHBOR": {
-	"10.0.0.57": {
-		"rrclient": "0", 
-		"name": "ARISTA01T1", 
-		"local_addr": "10.0.0.56", 
-		"nhopself": "0", 
-		"holdtime": "10", 
-		"asn": "64600", 
-		"keepalive": "3"
-	}, 
-    "10.0.0.59": {
-        "rrclient": "0", 
-        "name": "ARISTA02T1", 
-        "local_addr": "10.0.0.58", 
-        "nhopself": "0", 
-        "holdtime": "10", 
-        "asn": "64600", 
+    "10.0.0.57": {
+        "rrclient": "0",
+        "name": "ARISTA01T1",
+        "local_addr": "10.0.0.56",
+        "nhopself": "0",
+        "holdtime": "10",
+        "asn": "64600",
         "keepalive": "3"
-	},
+    },
+    "10.0.0.59": {
+        "rrclient": "0",
+        "name": "ARISTA02T1",
+        "local_addr": "10.0.0.58",
+        "nhopself": "0",
+        "holdtime": "10",
+        "asn": "64600",
+        "keepalive": "3"
+    },
 }
 ```
 
@@ -703,12 +707,13 @@ This kind of profiles will be handled by buffer manager and won't be applied to 
 
 ### Data Plane L3 Interfaces
 
-IP configuration for data plane are defined in **INTERFACE**,
-**PORTCHANNEL_INTERFACE**, and **VLAN_INTERFACE** table. The objects
-in all three tables have the interface (could be physical port, port
-channel, or vlan) that IP address is attached to as first-level key, and
-IP prefix as second-level key. IP interface objects don't have any
-attributes.
+IP configuration for data plane are defined in **INTERFACE**, **VLAN_SUB_INTERFACE**,
+**PORTCHANNEL_INTERFACE** and **VLAN_INTERFACE** table. The objects
+in all four tables have the interface (could be physical port, port
+channel, vlan or vlan sub interface) that IP address is attached to as first-level key, and
+IP prefix as second-level key. IP interface address objects don't have any attributes.
+IP interface attributes, resides in those tables as well, key is the interface name
+and value is a list of field-values representing the interface attributes, e.g. loopback action.
 
 ```
 {
@@ -716,21 +721,29 @@ attributes.
         "Ethernet0|10.0.0.0/31": {},
         "Ethernet4|10.0.0.2/31": {},
         "Ethernet8|10.0.0.4/31": {}
-		...
+        "Ethernet8": {
+            "loopback_action": "drop"
+        }
     },
-	
+
 "PORTCHANNEL_INTERFACE": {
         "PortChannel01|10.0.0.56/31": {},
         "PortChannel01|FC00::71/126": {},
         "PortChannel02|10.0.0.58/31": {},
         "PortChannel02|FC00::75/126": {}
-		...
     },
+
 "VLAN_INTERFACE": {
         "Vlan1000|192.168.0.1/27": {}
+    },
+
+"VLAN_SUB_INTERFACE": {
+        "Ethernet4.1|10.0.0.2/31": {},
+        "Ethernet4.1": {
+            "loopback_action": "drop"
+        }
     }
 }
-
 ```
 
 
@@ -771,6 +784,7 @@ instance is supported in SONiC.
         "bgp_asn": "65100",
         "deployment_id": "1",
         "type": "ToRRouter",
+        "bgp_adv_lo_prefix_as_128" : "true",
         "buffer_model": "traditional"
     }
   }
@@ -931,6 +945,9 @@ Loopback interface configuration lies in **LOOPBACK_INTERFACE** table
 and has similar schema with data plane interfaces. The loopback device
 name and loopback IP prefix act as multi-level key for loopback
 interface objects.
+By default SONiC advertises Loopback interface IPv6 /128 subnet address
+as prefix with /64 subnet. To overcome this set "bgp_adv_lo_prefix_as_128"
+to true in DEVICE_METADATA
 
 ```
 {
@@ -1167,7 +1184,10 @@ optional attributes.
             "description": "fortyGigE1/1/1",
             "mtu": "9100",
             "alias": "fortyGigE1/1/1",
-            "speed": "40000"
+            "speed": "40000",
+            "link_training": "off",
+            "laser_freq": "191300",
+            "tx_power": "-27.3"
         },
         "Ethernet1": {
             "index": "1",
@@ -1176,15 +1196,20 @@ optional attributes.
             "mtu": "9100",
             "alias": "fortyGigE1/1/2",
             "admin_status": "up",
-            "speed": "40000"
+            "speed": "40000",
+            "link_training": "on",
+            "laser_freq": "191300",
+            "tx_power": "-27.3"
         },
-		"Ethernet63": {
+        "Ethernet63": {
             "index": "63",
             "lanes": "87,88",
             "description": "fortyGigE1/4/16",
             "mtu": "9100",
             "alias": "fortyGigE1/4/16",
-            "speed": "40000"
+            "speed": "40000",
+            "laser_freq": "191300",
+            "tx_power": "-27.3"
         }
     }
 }
@@ -1351,6 +1376,25 @@ name as object key and member list as attribute.
 }  
 ```
 
+### Telemetry
+
+```
+{
+    "TELEMETRY": {
+        "certs": {
+            "ca_crt": "/etc/sonic/telemetry/dsmsroot.cer",
+            "server_crt": "/etc/sonic/telemetry/streamingtelemetryserver.cer",
+            "server_key": "/etc/sonic/telemetry/streamingtelemetryserver.key"
+        },
+        "gnmi": {
+            "client_auth": "true",
+            "log_level": "2",
+            "port": "50051"
+        }
+    }
+}
+```
+
 ### Versions
 
 This table is where the curret version of the software is recorded.
@@ -1478,6 +1522,40 @@ The packet action could be:
         "wred_red_enable": "true", 
         "yellow_drop_probability": "5", 
         "red_drop_probability": "5"
+    }
+  }
+}
+```
+### PASSWORD_HARDENING
+
+Password Hardening, a user password is the key credential used in order to verify the user accessing the switch and acts as the first line of defense in regards to securing the switch. PASSWORD_HARDENING - support the enforce strong policies.
+
+-   state - Enable/Disable password hardening feature
+-   len_min - The minimum length of the PW should be subject to a user change.
+-   expiration - PW Age Change Once a PW change takes place - the DB record for said PW is updated with the new PW value and a fresh new age (=0).
+-   expiration_warning - The switch will provide a warning for PW change before and (this is to allow a sufficient warning for upgrading the PW which might be relevant to numerous switches).
+-   history_cnt - remember last passwords, and reject to use the old passw
+-   reject_user_passw_match - reject to set same username and passw
+-   PW classes -  are the type of characters the user is required to enter when setting/updating a PW.
+There are 4 classes
+    -   lower_class - Small characters - a-z
+    -   upper_class - Big characters - A-Z
+    -   digits_class -Numbers - 0-9
+    -   special_class - Special Characters `~!@#$%^&*()-_+=|[{}];:',<.>/? and white space
+```
+{
+"PASSW_HARDENING": {
+    "POLICIES": {
+        "state": "disabled",
+        "expiration": "180",
+        "expiration_warning": "15",
+        "history_cnt": "10",
+        "len_min": "8",
+        "reject_user_passw_match": "true",
+        "lower_class": "true",
+        "upper_class": "true",
+        "digits_class": "true",
+        "special_class": "true"
     }
   }
 }

@@ -71,12 +71,12 @@ generate_onie_installer_image()
     output_file=$OUTPUT_ONIE_IMAGE
     [ -n "$1" ] && output_file=$1
     # Copy platform-specific ONIE installer config files where onie-mk-demo.sh expects them
-    rm -rf ./installer/x86_64/platforms/
-    mkdir -p ./installer/x86_64/platforms/
+    rm -rf ./installer/${TARGET_PLATFORM}/platforms/
+    mkdir -p ./installer/${TARGET_PLATFORM}/platforms/
     for VENDOR in `ls ./device`; do
-        for PLATFORM in `ls ./device/$VENDOR`; do
+        for PLATFORM in `ls ./device/$VENDOR | grep ^${TARGET_PLATFORM}`; do
             if [ -f ./device/$VENDOR/$PLATFORM/installer.conf ]; then
-                cp ./device/$VENDOR/$PLATFORM/installer.conf ./installer/x86_64/platforms/$PLATFORM
+                cp ./device/$VENDOR/$PLATFORM/installer.conf ./installer/${TARGET_PLATFORM}/platforms/$PLATFORM
             fi
 
         done
@@ -199,6 +199,14 @@ elif [ "$IMAGE_TYPE" = "aboot" ]; then
 
     generate_device_list ".platforms_asic"
     zip -g $OUTPUT_ABOOT_IMAGE .platforms_asic
+
+    if [ "$ENABLE_FIPS" = "y" ]; then
+        echo "sonic_fips=1" > kernel-cmdline
+    else
+        echo "sonic_fips=0" > kernel-cmdline
+    fi
+    zip -g $OUTPUT_ABOOT_IMAGE kernel-cmdline
+    rm kernel-cmdline
 
     zip -g $OUTPUT_ABOOT_IMAGE $ABOOT_BOOT_IMAGE
     rm $ABOOT_BOOT_IMAGE

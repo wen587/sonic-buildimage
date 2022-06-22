@@ -137,6 +137,7 @@ MULTIARCH_QEMU_ENVIRON = y
 endif
 endif
 SLAVE_IMAGE = $(SLAVE_BASE_IMAGE)-$(USER_LC)
+DOCKER_ROOT = $(PWD)/fsroot.docker.$(BLDENV)
 
 # Support FIPS feature, armhf not supported yet
 ifeq ($(PLATFORM_ARCH),armhf)
@@ -181,6 +182,7 @@ endif
 DOCKER_LOCKFILE_SAVE := $(DOCKER_LOCKDIR)/docker_save.lock
 $(shell mkdir -m 0777 -p $(DOCKER_LOCKDIR))
 $(shell [ -f $(DOCKER_LOCKFILE_SAVE) ] || (touch $(DOCKER_LOCKFILE_SAVE) && chmod 0777 $(DOCKER_LOCKFILE_SAVE)))
+$(shell sudo rm -rf $(DOCKER_ROOT) && mkdir -p $(DOCKER_ROOT))
 
 ifeq ($(DOCKER_BUILDER_MOUNT),)
 override DOCKER_BUILDER_MOUNT := "$(PWD):/sonic"
@@ -199,6 +201,11 @@ DOCKER_RUN := docker run --rm=true --privileged --init \
     -e "no_proxy=$(no_proxy)" \
     -i$(shell { if [ -t 0 ]; then echo t; fi }) \
     $(SONIC_BUILDER_EXTRA_CMDLINE)
+
+# Mount the $(DOCKER_ROOT) to /var/lib/docker in the slave container, the overlay fs is not supported as dockerd root folder.
+ifneq ($(filter $(SONIC_SLAVE_DOCKER_DRIVER),overlay overlay2),)
+	DOCKER_RUN += -v $(DOCKER_ROOT):/var/lib/docker
+endif
 
 ifneq ($(DOCKER_BUILDER_USER_MOUNT),)
 	DOCKER_RUN += $(foreach mount,$(subst $(comma), ,$(DOCKER_BUILDER_USER_MOUNT)), $(addprefix -v , $(mount)))
@@ -294,12 +301,18 @@ endif
 
 endif
 
+SPLIT_LOG = | tee
+
+DOCKER_BASE_LOG = $(SLAVE_DIR)/$(SLAVE_BASE_IMAGE)_$(SLAVE_BASE_TAG).log
+DOCKER_LOG = $(SLAVE_DIR)/$(SLAVE_IMAGE)_$(SLAVE_TAG).log
+
+
 DOCKER_BASE_BUILD = docker build --no-cache \
 		    -t $(SLAVE_BASE_IMAGE):$(SLAVE_BASE_TAG) \
 		    --build-arg http_proxy=$(http_proxy) \
 		    --build-arg https_proxy=$(https_proxy) \
 		    --build-arg no_proxy=$(no_proxy) \
-		    $(SLAVE_DIR)
+		    $(SLAVE_DIR) $(SPLIT_LOG) $(DOCKER_BASE_LOG)
 
 DOCKER_BASE_PULL = docker pull \
 			$(REGISTRY_SERVER):$(REGISTRY_PORT)/$(SLAVE_BASE_IMAGE):$(SLAVE_BASE_TAG)
@@ -312,7 +325,7 @@ DOCKER_BUILD = docker build --no-cache \
                --build-arg slave_base_tag_ref=$(SLAVE_BASE_TAG) \
 	       -t $(SLAVE_IMAGE):$(SLAVE_TAG) \
 	       -f $(SLAVE_DIR)/Dockerfile.user \
-	       $(SLAVE_DIR)
+	       $(SLAVE_DIR) $(SPLIT_LOG) $(DOCKER_LOG)
 
 SONIC_BUILD_INSTRUCTION :=  make \
                            -f slave.mk \
@@ -354,6 +367,7 @@ SONIC_BUILD_INSTRUCTION :=  make \
                            SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD=$(SONIC_CONFIG_USE_NATIVE_DOCKERD_FOR_BUILD) \
                            SONIC_INCLUDE_SYSTEM_TELEMETRY=$(INCLUDE_SYSTEM_TELEMETRY) \
                            INCLUDE_DHCP_RELAY=$(INCLUDE_DHCP_RELAY) \
+                           INCLUDE_MACSEC=$(INCLUDE_MACSEC) \
                            SONIC_INCLUDE_RESTAPI=$(INCLUDE_RESTAPI) \
                            SONIC_INCLUDE_MUX=$(INCLUDE_MUX) \
                            TELEMETRY_WRITABLE=$(TELEMETRY_WRITABLE) \
@@ -369,6 +383,7 @@ SONIC_BUILD_INSTRUCTION :=  make \
                            ENABLE_ASAN=$(ENABLE_ASAN) \
                            ENABLE_FIPS_FEATURE=$(ENABLE_FIPS_FEATURE) \
                            ENABLE_FIPS=$(ENABLE_FIPS) \
+                           SONIC_SLAVE_DOCKER_DRIVER=$(SONIC_SLAVE_DOCKER_DRIVER) \
                            $(SONIC_OVERRIDE_BUILD_VARS)
 
 .PHONY: sonic-slave-build sonic-slave-bash init reset
@@ -456,7 +471,7 @@ reset :
 	@read ans && (
 	    if [ $$ans == y ]; then
 	        echo "Resetting local repository. Please wait...";
-	        $(DOCKER_RUN) $(SLAVE_IMAGE):$(SLAVE_TAG) sudo rm -rf fsroot;
+	        sudo rm -rf fsroot*;
 	        if [ "$(MULTIARCH_QEMU_ENVIRON)" == y ] && [[ "$(CONFIGURED_ARCH)" == "armhf" || "$(CONFIGURED_ARCH)" ==  "arm64" ]]; then
 	            echo "Stopping march $(CONFIGURED_ARCH) docker"
 	            sudo kill -9 `sudo cat /var/run/march/docker.pid` || true

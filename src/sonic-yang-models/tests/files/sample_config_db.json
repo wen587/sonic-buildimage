@@ -117,7 +117,8 @@
         },
         "PORTCHANNEL_INTERFACE": {
                 "PortChannel0003": {
-                    "nat_zone": "1"
+                    "nat_zone": "1",
+                    "loopback_action": "drop"
                 },
                 "PortChannel0004": {"vrf_name": "Vrf_blue"},
                 "PortChannel42|10.1.0.1/31": {},
@@ -132,7 +133,8 @@
         },
         "VLAN_INTERFACE": {
             "Vlan111": {
-                "nat_zone": "0"
+                "nat_zone": "0",
+                "loopback_action": "forward"
             },
             "Vlan777": {},
             "Vlan111|2a04:5555:45:6709::1/64": {
@@ -302,6 +304,12 @@
                 "MIRROR_INGRESS_ACTION": "erspan",
                 "DSCP": "10",
                 "PRIORITY": "9999"
+            },
+            "DATAACL|RULE0": {
+                "PRIORITY": "999",
+                "PACKET_ACTION": "DROP",
+                "IP_TYPE": "IPv4ANY",
+                "SRC_IP": "1.1.1.1/32"
             }
         },
         "DEVICE_METADATA": {
@@ -319,7 +327,8 @@
                 "switch_type": "voq",
                 "max_cores": "8",
                 "sub_role": "FrontEnd",
-                "dhcp_server": "disabled"
+                "dhcp_server": "disabled",
+                "bgp_adv_lo_prefix_as_128": "true"
             }
         },
         "VLAN": {
@@ -438,7 +447,10 @@
                 "index": "0",
                 "asic_port_name": "Eth0-ASIC1",
                 "role": "Ext",
-                "macsec": "test"
+                "macsec": "test",
+                "link_training": "off",
+                "laser_freq": "191600",
+                "tx_power": "-26.6"
             },
             "Ethernet1": {
                 "alias": "Eth1/2",
@@ -449,7 +461,10 @@
                 "admin_status": "up",
                 "autoneg": "on",
                 "adv_speeds": "100000,50000",
-                "adv_interface_types": "CR,CR4"
+                "adv_interface_types": "CR,CR4",
+                "link_training": "on",
+                "laser_freq": "191300",
+                "tx_power": "-27.3"
             },
             "Ethernet2": {
                 "alias": "Eth1/3",
@@ -814,6 +829,14 @@
                     "Ethernet24"
                 ],
                 "stage": "ingress"
+            },
+            "DATAACL": {
+                "stage": "INGRESS",
+                "type": "CUSTOM_L3",
+                "ports": [
+                    "Ethernet0",
+                    "PortChannel0003"
+                ]
             }
 
         },
@@ -909,7 +932,8 @@
             "Ethernet14": {},
             "Ethernet16": {},
             "Ethernet18": {
-                "nat_zone": "1"
+                "nat_zone": "1",
+                "loopback_action": "forward"
             },
             "Ethernet112|2a04:5555:40:a709::2/126": {
                 "scope": "global",
@@ -946,7 +970,8 @@
         },
         "VLAN_SUB_INTERFACE": {
             "Ethernet12.10": {
-                "admin_status": "up"
+                "admin_status": "up",
+                "loopback_action": "drop"
             },
             "Ethernet12.10|10.0.1.56/31": {},
             "Ethernet12.10|fc00::1:71/126": {},
@@ -1043,6 +1068,18 @@
                 "VERSION": "version_1_0_3"
             }
         },
+        "TELEMETRY": {
+            "certs": {
+                "ca_crt": "/etc/sonic/telemetry/dsmsroot.cer",
+		"server_crt": "/etc/sonic/telemetry/streamingtelemetryserver.cer",
+		"server_key": "/etc/sonic/telemetry/streamingtelemetryserver.key"
+            },
+	    "gnmi": {
+		"client_auth": "true",
+		"log_level": "2",
+		"port": "50051"
+	    }
+        },
         "FLEX_COUNTER_TABLE": {
             "PFCWD": {
                 "FLEX_COUNTER_STATUS": "enable"
@@ -1098,12 +1135,21 @@
                 "acl_counter_high_threshold": "85",
                 "acl_counter_low_threshold": "70",
                 "acl_counter_threshold_type": "percentage",
+                "dnat_entry_threshold_type": "percentage",
+                "dnat_entry_high_threshold": "85",
+                "dnat_entry_low_threshold": "70",
+                "ipmc_entry_threshold_type": "percentage",
+                "ipmc_entry_high_threshold": "85",
+                "ipmc_entry_low_threshold": "70",
                 "ipv6_neighbor_high_threshold": "67",
                 "ipv6_neighbor_low_threshold": "56",
                 "ipv6_neighbor_threshold_type": "percentage",
                 "nexthop_group_high_threshold": "67",
                 "nexthop_group_low_threshold": "56",
                 "nexthop_group_threshold_type": "percentage",
+                "snat_entry_threshold_type": "percentage",
+                "snat_entry_high_threshold": "85",
+                "snat_entry_low_threshold": "70",
                 "polling_interval": "0"
             }
         },
@@ -1514,7 +1560,7 @@
                 "pir": "2560000",
                 "type": "STRICT"
             }
-        },
+	},
 
         "WRED_PROFILE": {
             "Wred1": {
@@ -1755,6 +1801,21 @@
             }
         },
 
+        "PASSW_HARDENING": {
+            "POLICIES": {
+                "state": "enabled",
+                "expiration": "180",
+                "expiration_warning": "15",
+                "history_cnt": "10",
+                "len_min": "8",
+                "reject_user_passw_match": "true",
+                "digits_class": "true",
+                "lower_class": "true",
+                "special_class": "true",
+                "upper_class": "true"
+            }
+        },
+
         "MACSEC_PROFILE": {
             "test": {
                 "priority": "64",
@@ -1801,7 +1862,23 @@
                 "memory": "0M-2G:256M,2G-4G:256M,4G-8G:384M,8G-:448M"
              }
          },
-
+         "ACL_TABLE_TYPE": {
+             "CUSTOM_L3": {
+                 "matches": [
+                     "IN_PORTS",
+                     "OUT_PORTS",
+                     "SRC_IP"
+                 ],
+                 "actions": [
+                     "PACKET_ACTION",
+                     "MIRROR_INGRESS_ACTION"
+                 ],
+                 "bind_points": [
+                     "PORT",
+                     "LAG"
+                 ]
+             }
+        },
         "SNMP": {
             "CONTACT": {
                 "Contact": "testuser@contoso.com"

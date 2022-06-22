@@ -14,6 +14,7 @@ $(SONIC_ONE_IMAGE)_LAZY_INSTALLS += $(DELL_S6000_PLATFORM_MODULE) \
                                $(DELL_S5232F_PLATFORM_MODULE) \
                                $(DELL_S5248F_PLATFORM_MODULE) \
                                $(DELL_Z9332F_PLATFORM_MODULE) \
+                               $(DELL_Z9432F_PLATFORM_MODULE) \
                                $(DELL_S5296F_PLATFORM_MODULE) \
                                $(DELL_Z9100_PLATFORM_MODULE) \
                                $(DELL_S6100_PLATFORM_MODULE) \
@@ -52,6 +53,7 @@ $(SONIC_ONE_IMAGE)_LAZY_INSTALLS += $(DELL_S6000_PLATFORM_MODULE) \
                                $(CEL_DX010_PLATFORM_MODULE) \
                                $(CEL_HALIBURTON_PLATFORM_MODULE) \
                                $(CEL_SEASTONE2_PLATFORM_MODULE) \
+                               $(CEL_BELGITE_PLATFORM_MODULE) \
                                $(DELTA_AG9032V1_PLATFORM_MODULE) \
                                $(DELTA_AG9064_PLATFORM_MODULE) \
                                $(DELTA_AG5648_PLATFORM_MODULE) \

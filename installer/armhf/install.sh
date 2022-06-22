@@ -155,9 +155,9 @@ fi
 # Decompress the file for the file system directly to the partition
 if [ x"$docker_inram" = x"on" ]; then
     # when disk is small, keep dockerfs.tar.gz in disk, expand it into ramfs during initrd
-    unzip -o $ONIE_INSTALLER_PAYLOAD -d $demo_mnt/$image_dir
+    unzip -o $ONIE_INSTALLER_PAYLOAD -x "platform.tar.gz" -d $demo_mnt/$image_dir
 else
-    unzip -o $ONIE_INSTALLER_PAYLOAD -x "$FILESYSTEM_DOCKERFS" -d $demo_mnt/$image_dir
+    unzip -o $ONIE_INSTALLER_PAYLOAD -x "$FILESYSTEM_DOCKERFS" "platform.tar.gz" -d $demo_mnt/$image_dir
 
     if [ "$install_env" = "onie" ]; then
         TAR_EXTRA_OPTION="--numeric-owner"
@@ -168,6 +168,8 @@ else
     unzip -op $ONIE_INSTALLER_PAYLOAD "$FILESYSTEM_DOCKERFS" | tar xz $TAR_EXTRA_OPTION -f - -C $demo_mnt/$image_dir/$DOCKERFS_DIR
 fi
 
+mkdir -p $demo_mnt/$image_dir/platform
+unzip -op $ONIE_INSTALLER_PAYLOAD "platform.tar.gz" | tar xz $TAR_EXTRA_OPTION -f - -C $demo_mnt/$image_dir/platform
 
 if [ "$install_env" = "onie" ]; then
     # Store machine description in target file system
@@ -180,6 +182,9 @@ if [ "$install_env" = "onie" ]; then
         cp /etc/machine.conf $demo_mnt
     fi
 fi
+
+extra_cmdline_linux=%%EXTRA_CMDLINE_LINUX%%
+echo "EXTRA_CMDLINE_LINUX=$extra_cmdline_linux"
 
 # Update Bootloader Menu with installed image
 bootloader_menu_config

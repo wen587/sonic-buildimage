@@ -86,7 +86,7 @@ installer_image_path="$image_path/$installer_image"
 
 boot_config="$target_path/boot-config"
 
-cmdline_allowlist="crashkernel hwaddr_ma1"
+cmdline_allowlist="crashkernel hwaddr_ma1 sonic_fips"
 
 # for backward compatibility with the sonic_upgrade= behavior
 install="${install:-${sonic_upgrade:-}}"
@@ -348,7 +348,12 @@ extract_image() {
 
     info "Extracting swi content"
     ## Unzip the image except boot0 and dockerfs archive
-    unzip -oq "$swipath" -x boot0 "$dockerfs" -d "$image_path"
+    unzip -oq "$swipath" -x boot0 "$dockerfs" "platform.tar.gz" -d "$image_path"
+
+    ## Extract the platform.tar.gz
+    info "Extracting platform.tar.gz"
+    mkdir -p "$image_path/platform"
+    unzip -oqp "$swipath" "platform.tar.gz" | tar xzf - -C "$image_path/platform" $TAR_EXTRA_OPTION
 
     ## detect rootfs type
     local mountstr="$(grep " $target_path " /proc/mounts)"
@@ -532,6 +537,12 @@ write_platform_specific_cmdline() {
         aboot_machine=arista_7060dx4_32
         flash_size=28000
     fi
+    if [ "$sid" = "BlackhawkT4O" ]; then
+        aboot_machine=arista_7050px4_32s
+    fi
+    if [ "$sid" = "BlackhawkT4DD" ]; then
+        aboot_machine=arista_7050dx4_32s
+    fi
     if [ "$sid" = "Smartsville" ]; then
         aboot_machine=arista_7280cr3_32p4
     fi
@@ -550,12 +561,34 @@ write_platform_specific_cmdline() {
     if [ "$sid" = "SmartsvilleDDBkMs" ] || [ "$sid" = "SmartsvilleDDBkMsTpm" ]; then
         aboot_machine=arista_7280cr3mk_32d4
     fi
+    if [ "$sid" = "CatalinaP" ]; then
+        aboot_machine=arista_7060px5_64s
+    fi
+    if [ "$sid" = "CatalinaDD" ]; then
+        aboot_machine=arista_7060dx5_64s
+    fi
     if [ "$sid" = "Clearwater2" ]; then
         aboot_machine=arista_7800r3_48cq2_lc
         sonic_mode="$linecard_mode"
     fi
     if [ "$sid" = "Clearwater2Ms" ]; then
         aboot_machine=arista_7800r3_48cqm2_lc
+        sonic_mode="$linecard_mode"
+    fi
+    if [ "$sid" = "WolverineQCpu" ]; then
+        aboot_machine=arista_7800r3a_36d2_lc
+        sonic_mode="$linecard_mode"
+    fi
+    if [ "$sid" = "WolverineQCpuBk" ]; then
+        aboot_machine=arista_7800r3ak_36d2_lc
+        sonic_mode="$linecard_mode"
+    fi
+    if [ "$sid" = "WolverineQCpuMs" ]; then
+        aboot_machine=arista_7800r3a_36dm2_lc
+        sonic_mode="$linecard_mode"
+    fi
+    if [ "$sid" = "WolverineQCpuBkMs" ]; then
+        aboot_machine=arista_7800r3ak_36dm2_lc
         sonic_mode="$linecard_mode"
     fi
     if [ "$sid" = "OtterLake" ]; then

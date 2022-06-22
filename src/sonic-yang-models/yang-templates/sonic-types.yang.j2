@@ -117,6 +117,12 @@ module sonic-types {
         }
     }
 
+    typedef loopback_action {
+        type string {
+            pattern "drop|forward";
+        }
+    }
+
     typedef admin_mode {
         type enumeration {
             enum enabled;
@@ -136,13 +142,17 @@ module sonic-types {
             enum CR;
             enum CR2;
             enum CR4;
+            enum CR8;
             enum SR;
             enum SR2;
             enum SR4;
+            enum SR8;
             enum LR;
             enum LR4;
+            enum LR8;
             enum KR;
             enum KR4;
+            enum KR8;
             enum CAUI;
             enum GMII;
             enum SFI;

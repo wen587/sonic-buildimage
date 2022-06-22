@@ -422,7 +422,7 @@ rm /files/etc/ssh/sshd_config/ClientAliveCountMax
 touch /files/etc/ssh/sshd_config/EmptyLineHack
 rename /files/etc/ssh/sshd_config/EmptyLineHack ""
 set /files/etc/ssh/sshd_config/ClientAliveInterval 900
-set /files/etc/ssh/sshd_config/ClientAliveCountMax 0
+set /files/etc/ssh/sshd_config/ClientAliveCountMax 1
 ins #comment before /files/etc/ssh/sshd_config/ClientAliveInterval
 set /files/etc/ssh/sshd_config/#comment[following-sibling::*[1][self::ClientAliveInterval]] "Close inactive client sessions after 15 minutes"
 save
@@ -647,5 +647,5 @@ fi
 pushd $FILESYSTEM_ROOT && sudo tar czf $OLDPWD/$FILESYSTEM_DOCKERFS -C ${DOCKERFS_PATH}var/lib/docker .; popd
 
 ## Compress together with /boot, /var/lib/docker and $PLATFORM_DIR as an installer payload zip file
-pushd $FILESYSTEM_ROOT && sudo zip --symlinks $OLDPWD/$ONIE_INSTALLER_PAYLOAD -r boot/ $PLATFORM_DIR/; popd
+pushd $FILESYSTEM_ROOT && sudo tar czf platform.tar.gz -C $PLATFORM_DIR . && sudo zip -n .gz $OLDPWD/$ONIE_INSTALLER_PAYLOAD -r boot/ platform.tar.gz; popd
 sudo zip -g -n .squashfs:.gz $ONIE_INSTALLER_PAYLOAD $FILESYSTEM_SQUASHFS $FILESYSTEM_DOCKERFS

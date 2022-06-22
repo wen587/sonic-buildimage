@@ -13,10 +13,15 @@ try:
     import time
     import struct
     import mmap
+    import subprocess
     from sonic_platform_base.sonic_xcvr.sfp_optoe_base import SfpOptoeBase
 
 except ImportError as e:
     raise ImportError(str(e) + "- required module not found")
+
+QSFP_INFO_OFFSET = 128
+SFP_INFO_OFFSET = 0
+QSFP_DD_PAGE0 = 0
 
 SFP_TYPE_LIST = [
     '0x3' # SFP/SFP+/SFP28 and later
@@ -38,7 +43,9 @@ class Sfp(SfpOptoeBase):
 
     def __init__(self, index, sfp_type, eeprom_path):
         SfpOptoeBase.__init__(self)
+        self.port_type = sfp_type
         self.sfp_type = sfp_type
+        self.port_type = sfp_type
         self.index = index
         self.eeprom_path = eeprom_path
         self._initialize_media(delay=False)
@@ -89,6 +96,23 @@ class Sfp(SfpOptoeBase):
 
         self.set_media_type()
         self.reinit_sfp_driver()
+
+    def get_position_in_parent(self):
+        """
+        Retrieves 1-based relative physical position in parent device.
+        Returns:
+            integer: The 1-based relative physical position in parent
+            device or -1 if cannot determine the position
+        """
+        return self.index
+
+    def is_replaceable(self):
+        """
+        Indicate whether this device  is replaceable.
+        Returns:
+            bool: True if it is replaceable.
+        """
+        return True
 
     def get_presence(self):
         """
@@ -311,3 +335,33 @@ class Sfp(SfpOptoeBase):
         except IOError as e:
             print("Error: Unable to open file: %s" % str(e))
             return False
+
+    def get_error_description(self):
+        """
+        Retrives the error descriptions of the SFP module
+        Returns:
+            String that represents the current error descriptions of vendor specific errors
+            In case there are multiple errors, they should be joined by '|',
+            like: "Bad EEPROM|Unsupported cable"
+        """
+        if not self.get_presence():
+            return self.SFP_STATUS_UNPLUGGED
+        else:
+            if not os.path.isfile(self.eeprom_path):
+                return "EEPROM driver is not attached"
+
+            if self.sfp_type == 'SFP':
+                offset = SFP_INFO_OFFSET
+            elif self.sfp_type == 'QSFP':
+                offset = QSFP_INFO_OFFSET
+            elif self.sfp_type == 'QSFP_DD':
+                offset = QSFP_DD_PAGE0
+
+            try:
+                with open(self.eeprom_path, mode="rb", buffering=0) as eeprom:
+                    eeprom.seek(offset)
+                    eeprom.read(1)
+            except OSError as e:
+                return "EEPROM read failed ({})".format(e.strerror)
+
+        return self.SFP_STATUS_OK

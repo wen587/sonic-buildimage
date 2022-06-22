@@ -48,7 +48,12 @@ function waitplatform() {
     BOOT_TYPE=`getBootType`
     if [[ x"$sonic_asic_platform" == x"mellanox" ]]; then
         if [[ x"$BOOT_TYPE" = @(x"fast"|x"warm"|x"fastfast") ]]; then
-            debug "PMON service is delayed by a timer for better fast/warm boot performance"
+            PMON_TIMER_STATUS=$(systemctl is-active pmon.timer)
+            if [[ x"$PMON_TIMER_STATUS" = x"inactive" ]]; then
+                systemctl start pmon.timer
+            else
+                debug "PMON service is delayed by a timer for better fast/warm boot performance"
+            fi
         else
             debug "Starting pmon service..."
             /bin/systemctl start pmon
@@ -58,9 +63,13 @@ function waitplatform() {
     if [[ x"$BOOT_TYPE" = @(x"fast"|x"warm"|x"fastfast") ]]; then
         debug "LLDP service is delayed by a timer for better fast/warm boot performance"
     else
-        debug "Starting lldp service..."
-        /bin/systemctl start lldp
-        debug "Started lldp service"
+        lldp_state=$(systemctl is-enabled lldp.timer)
+        if [[ $lldp_state == "enabled" ]]
+        then
+            debug "Starting lldp service..."
+            /bin/systemctl start lldp
+            debug "Started lldp service"
+        fi
     fi
 }
 
