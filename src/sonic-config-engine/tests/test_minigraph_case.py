@@ -1,6 +1,7 @@
 import json
 import os
 import subprocess
+import ipaddress
 
 import tests.common_utils as utils
 import minigraph
@@ -21,6 +22,8 @@ class TestCfgGenCaseInsensitive(TestCase):
         self.sample_simple_graph = os.path.join(self.test_dir, 'simple-sample-graph.xml')
         self.sample_resource_graph = os.path.join(self.test_dir, 'sample-graph-resource-type.xml')
         self.sample_subintf_graph = os.path.join(self.test_dir, 'sample-graph-subintf.xml')
+        self.sample_simple_device_desc = os.path.join(self.test_dir, 'simple-sample-device-desc.xml')
+        self.sample_simple_device_desc_ipv6_only = os.path.join(self.test_dir, 'simple-sample-device-desc-ipv6-only.xml')
         self.port_config = os.path.join(self.test_dir, 't0-sample-port-config.ini')
 
     def run_script(self, argument, check_stderr=False):
@@ -233,14 +236,6 @@ class TestCfgGenCaseInsensitive(TestCase):
                 'lo_addr_v6': '::/0',
                 'mgmt_addr': '0.0.0.0/0',
                 'type': 'SmartCable'
-            },
-            'server2-SC': {
-                'hwsku': 'smartcable-sku',
-                'lo_addr': '10.10.10.3/32',
-                'lo_addr_v6': '::/0',
-                'mgmt_addr': '0.0.0.0/0',
-                'type': 'SmartCable',
-                'subtype': 'active-active'
             }
         }
         output = self.run_script(argument)
@@ -418,6 +413,7 @@ class TestCfgGenCaseInsensitive(TestCase):
                 'server_ipv4': '10.10.10.2/32',
                 'server_ipv6': 'fe80::2/128',
                 'soc_ipv4': '10.10.10.3/32',
+                'soc_ipv6': 'fe80::3/128',
                 'cable_type': 'active-active'
             }
         }
@@ -463,5 +459,19 @@ class TestCfgGenCaseInsensitive(TestCase):
             expected_ports.sort()
         )
 
+    def test_parse_device_desc_xml_mgmt_interface(self):
+        # Regular device_desc.xml with both IPv4 and IPv6 mgmt address
+        result = minigraph.parse_device_desc_xml(self.sample_simple_device_desc)
+        mgmt_intf = result['MGMT_INTERFACE']
+        self.assertEqual(len(mgmt_intf.keys()), 2)
+        self.assertTrue(('eth0', '10.0.0.100/24') in mgmt_intf.keys())
+        self.assertTrue(('eth0', 'FC00:1::32/64') in mgmt_intf.keys())
+        self.assertTrue(ipaddress.ip_address(u'10.0.0.1') == mgmt_intf[('eth0', '10.0.0.100/24')]['gwaddr'])
+        self.assertTrue(ipaddress.ip_address(u'fc00:1::1') == mgmt_intf[('eth0', 'FC00:1::32/64')]['gwaddr'])
 
-    
+        # Special device_desc.xml with IPv6 mgmt address only
+        result = minigraph.parse_device_desc_xml(self.sample_simple_device_desc_ipv6_only)
+        mgmt_intf = result['MGMT_INTERFACE']
+        self.assertEqual(len(mgmt_intf.keys()), 1)
+        self.assertTrue(('eth0', 'FC00:1::32/64') in mgmt_intf.keys())
+        self.assertTrue(ipaddress.ip_address(u'fc00:1::1') == mgmt_intf[('eth0', 'FC00:1::32/64')]['gwaddr'])
