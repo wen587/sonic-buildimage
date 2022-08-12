@@ -36,11 +36,11 @@
                 "SNMP_COMMUNITY_LIST": [
                     {
                         "name": "sonicSnmp",
-                        "type": "RO"
+                        "TYPE": "RO"
                     },
                     {
                         "name": "sonicSnmpRW",
-                        "type": "RW"
+                        "TYPE": "RW"
                     }
                 ]
             }
@@ -74,7 +74,7 @@
                 "SNMP_COMMUNITY_LIST": [
                     {
                         "name": "sonicSnmp",
-                        "type": "RR"
+                        "TYPE": "RR"
                     }
                 ]
             }

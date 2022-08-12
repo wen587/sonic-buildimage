@@ -1909,10 +1909,10 @@
         },
         "SNMP_COMMUNITY": {
             "public": {
-                "type": "RO"
+                "TYPE": "RO"
             },
             "private": {
-                "type": "RW"
+                "TYPE": "RW"
             }
         },
 

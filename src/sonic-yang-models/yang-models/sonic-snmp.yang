@@ -60,7 +60,7 @@ module sonic-snmp {
             "Index into the community list which must be the community name.";
         }
 
-        leaf type {
+        leaf TYPE {
           type enumeration {
             enum RO;
             enum RW;
