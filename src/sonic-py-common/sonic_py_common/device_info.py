@@ -404,7 +404,7 @@ def get_chassis_info():
     return chassis_info_dict
 
 
-def is_yang_config_validation_enabled(config_db):
+def is_yang_config_validation_enabled(config_db=None):
     return get_localhost_info('yang_config_validation', config_db) == 'enable'
 
 #
