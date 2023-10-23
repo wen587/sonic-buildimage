@@ -10,11 +10,13 @@
         },
         "TELEMETRY_CLIENT_LIST": [
           {
-            "prefix": "DestinationGroup_HS",
+            "prefix": "DestinationGroup",
+            "name": "HS",
             "dst_addr": "30.57.186.214:8081,30.57.185.39:8081"
           },
           {
-            "prefix": "Subscription_HS_RDMA",
+            "prefix": "Subscription",
+            "name": "HS_RDMA",
             "dst_group": "HS",
             "path_target": "COUNTERS_DB",
             "paths": "COUNTERS/Ethernet*,COUNTERS_PORT_NAME_MAP",
@@ -36,11 +38,13 @@
         },
         "TELEMETRY_CLIENT_LIST": [
           {
-            "prefix": "DestinationGroup_HS",
+            "prefix": "DestinationGroup",
+            "name": "HS",
             "dst_addr": "30.57.186.214:8081,30.57.185.39:8081"
           },
           {
-            "prefix": "Subscription_HS_RDMA",
+            "prefix": "Subscription",
+            "name": "HS_RDMA",
             "dst_group": "FS",
             "path_target": "COUNTERS_DB",
             "paths": "COUNTERS/Ethernet*,COUNTERS_PORT_NAME_MAP",
@@ -62,11 +66,13 @@
         },
         "TELEMETRY_CLIENT_LIST": [
           {
-            "prefix": "DestinationGroup_HS",
+            "prefix": "DestinationGroup",
+            "name": "HS",
             "dst_addr": "30.57.186.214:8081,30.57.185.39:8081"
           },
           {
-            "prefix": "Subscription_HS_RDMA",
+            "prefix": "Subscription",
+            "name": "HS_RDMA",
             "dst_group": "HS",
             "path_target": "COUNTERS_DB",
             "paths": "COUNTERS/Ethernet*,COUNTERS_PORT_NAME_MAP",
@@ -88,11 +94,13 @@
         },
         "TELEMETRY_CLIENT_LIST": [
           {
-            "prefix": "DestinationGroup_HS",
+            "prefix": "DestinationGroup",
+            "name": "HS",
             "dst_addr": "30.57.186.214:8081,30.57.185.39:8081"
           },
           {
-            "prefix": "Subscription_HS_RDMA",
+            "prefix": "Subscription",
+            "name": "HS_RDMA",
             "dst_group": "HS",
             "path_target": "COUNTERS_DB",
             "paths": "COUNTERS/Ethernet*,COUNTERS_PORT_NAME_MAP",
@@ -114,11 +122,13 @@
         },
         "TELEMETRY_CLIENT_LIST": [
           {
-            "prefix": "DestinationGroup_HS",
+            "prefix": "DestinationGroup",
+            "name": "HS",
             "dst_addr": "30.57.186.214:80819,30.57.185.39:8081"
           },
           {
-            "prefix": "Subscription_HS_RDMA",
+            "prefix": "Subscription",
+            "name": "HS_RDMA",
             "dst_group": "HS",
             "path_target": "COUNTERS_DB",
             "paths": "COUNTERS/Ethernet*,COUNTERS_PORT_NAME_MAP",

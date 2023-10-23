@@ -88,12 +88,16 @@ module sonic-telemetry_client {
 
             list TELEMETRY_CLIENT_LIST {
                 ordered-by user;
-                key "prefix";
+                key "prefix name";
 
                 leaf prefix {
                     type string {
-                        pattern 'Subscription_|DestinationGroup_' + '.*';
+                        pattern 'Subscription|DestinationGroup';
                     }
+                }
+
+                leaf name {
+                    type string;
                 }
 
                 leaf dst_addr {
@@ -101,7 +105,7 @@ module sonic-telemetry_client {
                 }
 
                 leaf dst_group {
-                    must "(contains(../../TELEMETRY_CLIENT_LIST/prefix, current()))";
+                    must "(contains(../../TELEMETRY_CLIENT_LIST/name, current()))";
                     type string;
                 }
 
