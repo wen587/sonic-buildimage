@@ -36,7 +36,7 @@
 [submodule "src/sonic-utilities"]
 	path = src/sonic-utilities
 	url = https://github.com/wen587/sonic-utilities
-    branch = o_202205_reload_conflict
+	branch = o_202205_reload_conflict
 [submodule "platform/broadcom/sonic-platform-modules-arista"]
 	path = platform/broadcom/sonic-platform-modules-arista
 	url = https://github.com/aristanetworks/sonic
