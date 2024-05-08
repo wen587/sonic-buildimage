@@ -19,7 +19,7 @@
         "desc": "Configure an authorization type in AAA table."
     },
     "AAA_AUTHENTICATION_TEST_TACACS_WITHOUT_TACPLUS": {
-        "desc": "Configure tacacs in authorization type in AAA table without TACPLUS table.",
+        "desc": "Configure tacacs in authentication type in AAA table without TACPLUS table.",
         "eStr": ["Authentication with 'tacacs+' is not allowed when passkey not exists."]
     },
     "AAA_ACCOUNTING_TEST": {
