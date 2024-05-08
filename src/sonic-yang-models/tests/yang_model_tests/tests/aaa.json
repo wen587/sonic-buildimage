@@ -15,8 +15,8 @@
         "eStrKey": "Pattern",
         "eStr": ["false|true|False|True"]
     },
-    "AAA_AUTHORIZATION_TEST": {
-        "desc": "Configure an authorization type in AAA table."
+    "AAA_AUTHENTICATION_TEST": {
+        "desc": "Configure an authentication type in AAA table."
     },
     "AAA_AUTHENTICATION_TEST_TACACS_WITHOUT_TACPLUS": {
         "desc": "Configure tacacs in authentication type in AAA table without TACPLUS table.",
