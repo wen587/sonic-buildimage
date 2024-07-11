@@ -31,9 +31,9 @@ jobs:
           protected_file='src/sonic-config-engine/minigraph.py'
           base_branch=$(git rev-parse origin/${base_ref})
           if git diff --name-only $base_branch | grep -q "^${protected_file}\$"; then
-              echo "Error: You are trying to modify ${protected_file}, which is protected."
-              exit 1
+            echo "Error: You are trying to modify ${protected_file}, which is protected."
+            exit 1
           else
-              echo "No changes detected in ${protected_file}"
+            echo "No changes detected in ${protected_file}"
           fi
 
