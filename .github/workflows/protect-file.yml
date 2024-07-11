@@ -21,11 +21,6 @@ jobs:
         run: |
           echo "GitHub context: ${{ toJson(github) }}"
       
-      - name: Get base branch reference
-        run: |
-          base_ref=$(echo "${{ toJson(github) }}" | jq -r ".base_ref")
-          echo "Base branch reference: $base_ref"
-
       - name: Check protected file
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
