@@ -17,6 +17,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Fetch base branch
+        run: |
+          git fetch origin ${GITHUB_BASE_REF}
+
       - name: Check protected file
         run: |
           echo "Starting file check step"
