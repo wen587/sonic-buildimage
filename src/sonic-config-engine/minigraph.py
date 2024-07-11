@@ -3,7 +3,6 @@ from __future__ import print_function
 import ipaddress
 import math
 import os
-
 import sys
 import json
 import jinja2
