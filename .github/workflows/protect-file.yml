@@ -29,7 +29,7 @@ jobs:
           base_ref=$(echo "${GITHUB_CONTEXT}" | jq -r ".base_ref")
           echo "Base branch reference extracted: ${base_ref}"
           protected_file="src/sonic-config-engine/minigraph.py"
-          base_branch=$(git rev-parse origin/${base_ref})
+          base_branch="$(git rev-parse origin/${base_ref})"
           echo "Base branch SHA: ${base_branch}"
           echo "Running git diff check"
           git fetch origin ${base_ref}  # Fetch the base branch to ensure it's up-to-date
