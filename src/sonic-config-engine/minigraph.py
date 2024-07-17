@@ -4,8 +4,6 @@ import ipaddress
 import math
 import os
 import sys
-
-
 import json
 import jinja2
 import subprocess

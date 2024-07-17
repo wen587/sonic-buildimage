@@ -1,4 +1,4 @@
-name: Protect minigraph.py File to avoid further change
+name: Protect certain files to avoid further changes
 
 on:
   push:
@@ -21,15 +21,17 @@ jobs:
         run: |
           git fetch origin ${GITHUB_BASE_REF}
 
-      - name: Check protected file
+      - name: Check protected files
         run: |
           echo "Starting file check step"
-          protected_file='src/sonic-config-engine/minigraph.py'
+          protected_files=('src/sonic-config-engine/minigraph.py' 'files/build_templates/init_cfg.json.j2')
           base_branch=$(git rev-parse origin/${GITHUB_BASE_REF})
-          if git diff --name-only $base_branch | grep -q "^${protected_file}\$"; then
-            echo "Error: You are trying to modify ${protected_file}, which is protected."
-            exit 1
-          else
-            echo "No changes detected in ${protected_file}"
-          fi
-
+          
+          for protected_file in "${protected_files[@]}"; do
+            echo "Checking ${protected_file}"
+            if git diff --name-only $base_branch | grep -q "^${protected_file}\$"; then
+              echo "Error: You are trying to modify ${protected_file}, which is protected."
+              exit 1
+            fi
+          done
+          echo "No changes detected in protected files"
