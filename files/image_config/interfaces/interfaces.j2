@@ -98,7 +98,7 @@ iface {{ name }} {{ 'inet' if prefix | ipv4 else 'inet6' }} static
 {% endfor %}
 {% else %}
 {% if prefix | ipv4 %}
-    up ip rule add pref {{ force_mgmt_route_priority }} to 10.20.6.16/32 table {{ vrf_table }}
+    up ip rule add pref {{ force_mgmt_route_priority }} to 10.0.0.5/32 table {{ vrf_table }}
 {% endif %}
 {% endif %}
 {% if prefix | ipv6 and vrf_table == 'default'%}
@@ -122,7 +122,7 @@ iface {{ name }} {{ 'inet' if prefix | ipv4 else 'inet6' }} static
 {% endfor %}
 {% else %}
 {% if prefix | ipv4 %}
-    down ip rule delete pref {{ force_mgmt_route_priority }} to 10.20.6.16/32 table {{ vrf_table }}
+    down ip rule delete pref {{ force_mgmt_route_priority }} to 10.0.0.5/32 table {{ vrf_table }}
 {% endif %}
 {% endif %}
 {% if prefix | ipv6 and vrf_table == 'default'%}
