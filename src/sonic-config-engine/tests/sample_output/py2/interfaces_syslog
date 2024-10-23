@@ -30,7 +30,7 @@ iface eth0 inet static
     pre-down ip -4 route delete default via 10.0.0.1 dev eth0 table default
     pre-down ip -4 route delete 10.0.0.0/24 dev eth0 table default
     pre-down ip -4 rule delete pref 32765 from 10.0.0.100/32 table default
-    down ip rule delete pref 32764 to 10.3.145.8/322 table default
+    down ip rule delete pref 32764 to 10.3.145.8/32 table default
     down ip rule delete pref 32764 to 100.127.20.21/32 table default
 iface eth0 inet6 static
     address 2603:10e2:0:2902::8

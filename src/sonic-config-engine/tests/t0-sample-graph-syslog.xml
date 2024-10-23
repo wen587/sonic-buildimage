@@ -877,11 +877,6 @@
             <a:Reference i:nil="true"/>
             <a:Value>2.2.2.2</a:Value>
           </a:DeviceProperty>
-          <a:DeviceProperty>
-            <a:Name>SyslogResources</a:Name>
-            <a:Reference i:nil="true" />
-            <a:Value>10.3.145.8;100.127.20.21</a:Value>
-          </a:DeviceProperty>
         </a:Properties>
       </a:DeviceMetadata>
     </Devices>
@@ -932,6 +927,11 @@
      <a:Name>DeploymentId</a:Name>
      <a:Reference i:nil="true"/>
      <a:Value>1</a:Value>
+    </a:DeviceProperty>
+    <a:DeviceProperty>
+     <a:Name>SyslogResources</a:Name>
+     <a:Reference i:nil="true" />
+     <a:Value>10.3.145.8;100.127.20.21</a:Value>
     </a:DeviceProperty>
   </a:Properties>
   </a:DeviceMetadata>
