@@ -11,6 +11,7 @@ from sonic_py_common.general import getstatusoutput_noshell, getstatusoutput_nos
 
 class TestJ2Files(TestCase):
     def setUp(self):
+        self.yang = utils.YangWrapper()
         self.test_dir = os.path.dirname(os.path.realpath(__file__))
         self.script_file = [utils.PYTHON_INTERPRETTER, os.path.join(self.test_dir, '..', 'sonic-cfggen')]
         self.simple_minigraph = os.path.join(self.test_dir, 'simple-sample-graph.xml')
@@ -322,6 +323,7 @@ class TestJ2Files(TestCase):
 
     def test_t1_smartswitch_template(self):
         argument = ['-k', 'SSwitch-32x1000Gb', '--preset', 't1-smartswitch', '-p', self.t1_ss_port_config]
+        self.assertTrue(self.yang.validate(argument))
         output = self.run_script(argument)
         output_json = json.loads(output)
 
