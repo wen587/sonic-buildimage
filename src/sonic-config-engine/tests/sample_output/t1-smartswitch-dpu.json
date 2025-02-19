@@ -15,7 +15,7 @@
             "alias": "etp1",
             "admin_status": "up",
             "mtu": "9100",
-	    "speed": "100000"
+            "speed": "100000"
         }
     },
     "FLEX_COUNTER_TABLE": {
