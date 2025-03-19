@@ -73,7 +73,7 @@
 
     "VALID_NEIGH_PORTCHANNEL": {
         "sonic-neigh:sonic-neigh": {
-            "sonic-neigh:NTP": {
+            "sonic-neigh:NEIGH": {
                 "sonic-neigh:global": {
                     "port": [
                         "PortChannel11"
@@ -95,7 +95,7 @@
 
     "NEIGH_INVALID_PORTCHANNEL": {
         "sonic-neigh:sonic-neigh": {
-            "sonic-neigh:NTP": {
+            "sonic-neigh:NEIGH": {
                 "sonic-neigh:global": {
                     "port": [
                         "PortChannel10"
