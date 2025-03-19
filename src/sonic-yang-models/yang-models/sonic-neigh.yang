@@ -35,7 +35,7 @@ module sonic-neigh {
 				key "port neighbor";
 
 				leaf port {
-					description "Neighbor interface ex. Vlan1000";
+					description "Neighbor interface ex. Vlan1000, PortChannel1024";
 					type union {
 						type leafref {
 							path /lag:sonic-portchannel/lag:PORTCHANNEL/lag:PORTCHANNEL_LIST/lag:name;
