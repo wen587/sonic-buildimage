@@ -69,5 +69,49 @@
                 ]
             }
         }
+    },
+
+    "VALID_NEIGH_PORTCHANNEL": {
+        "sonic-neigh:sonic-neigh": {
+            "sonic-neigh:NTP": {
+                "sonic-neigh:global": {
+                    "port": [
+			            "PortChannel11"
+		            ]
+                }
+            }
+        },
+        "sonic-portchannel:sonic-portchannel": {
+            "sonic-portchannel:PORTCHANNEL": {
+                "PORTCHANNEL_LIST": [
+                    {
+                        "admin_status": "up",
+                        "name": "PortChannel11"
+                    }
+                ]
+            }
+        }
+    },
+
+    "NEIGH_INVALID_PORTCHANNEL": {
+        "sonic-neigh:sonic-neigh": {
+            "sonic-neigh:NTP": {
+                "sonic-neigh:global": {
+                    "port": [
+			            "PortChannel10"
+		            ]
+                }
+            }
+        },
+        "sonic-portchannel:sonic-portchannel": {
+            "sonic-portchannel:PORTCHANNEL": {
+                "PORTCHANNEL_LIST": [
+                    {
+                        "admin_status": "up",
+                        "name": "PortChannel11"
+                    }
+                ]
+            }
+        }
     }
 }
