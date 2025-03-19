@@ -10,7 +10,8 @@
 
     "NEIGH_INVALID_VLAN": {
         "desc": "Load NEIGH missing VLAN",
-        "eStr": ["does not satisfy the constraint"]
+        "eStrKey": "InvalidValue",
+        "eStr": ["port"]
     },
 
     "VALID_NEIGH_PORTCHANNEL": {
