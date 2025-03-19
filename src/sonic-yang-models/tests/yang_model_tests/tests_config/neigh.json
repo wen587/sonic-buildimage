@@ -76,8 +76,8 @@
             "sonic-neigh:NTP": {
                 "sonic-neigh:global": {
                     "port": [
-			            "PortChannel11"
-		            ]
+                        "PortChannel11"
+                    ]
                 }
             }
         },
@@ -98,8 +98,8 @@
             "sonic-neigh:NTP": {
                 "sonic-neigh:global": {
                     "port": [
-			            "PortChannel10"
-		            ]
+                        "PortChannel10"
+                    ]
                 }
             }
         },
